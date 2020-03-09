@@ -1,6 +1,6 @@
 PFont font;
 
-int randomIndex = 1;
+int countCats = 0;
 String [] words = {"Dog", "Cat", "Bear", "Frog"};
 
 void setup() {
@@ -9,20 +9,28 @@ void setup() {
 }
 
 void draw() {
-    background(255);                       // Cleaning screen
+  background(255);                       // Cleaning screen
 
-    textFont(font, 36);                    // Size text
-    fill(0);                               // Color text
-    String aux =randomPets(words.length); 
-    text(aux, 10, 50);
-    if (aux == "Cat") {
-      println(aux);
-      noLoop();
-    }
+  textFont(font, 36);                    // Size text
+  fill(0);                               // Color text
+  String aux =randomPets(words.length); 
+  text(aux, 10, 50);
+  text("Cat counter: " + countCats, 10, 90);
+
+  if (aux == "Cat") {
+    countCats++;
+    background(255);
+
+    text("Cat counter: " + countCats, 10, 90);
+    text("Press one key to continue", 10, 50);
+    noLoop();
+  }
+
+  delay(300);
 }
 
 void keyPressed() {
-  if(looping) noLoop();
+  if (looping) noLoop();
   else        loop();
 }
 
