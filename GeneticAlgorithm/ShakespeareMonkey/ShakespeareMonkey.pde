@@ -1,55 +1,70 @@
 PFont font;
 
-DNA [] population = new DNA[100];
+float mutationRate = 0.01;
+int totalPopulation = 150;
 
-
+DNA [] population;
+ArrayList<DNA> matingPool;
+String target;
 
 void setup() {
-  size(640, 320);
+  //noLoop();
+  size(820, 200);
+  font = createFont("Courier", 16, true);  // Config font
+
+  target ="to be or not to be";
+  population = new DNA [totalPopulation];
 
   for (int loop = 0; loop<population.length; loop++) {
-    population[loop] = new DNA();
+    population[loop] = new DNA(target.length());
   }
-
-  //noLoop();
 }
 
 void draw() {
-  background(255);    // Cleaning screen
-
   for (int iteration= 0; iteration<population.length; iteration++) {
-    population[iteration].calculateFitness();
+    population[iteration].calculateFitness(target);
   }
 
-  ArrayList<DNA> matingPool = new ArrayList<DNA>();
+  matingPool = new ArrayList<DNA>();
 
   for (int loopPopulation = 0; loopPopulation < population.length; loopPopulation++) {
-    int auxFitness = int (population[loopPopulation].fitness * 100);
-    //println("iteration"+ loopPopulation +" Gene: " + population[loopPopulation].getGene() + " Fitness: " +auxFitness);
+    int auxFitness = int(population[loopPopulation].fitness * 100);
     for (int loopFitness = 0; loopFitness < auxFitness; loopFitness++) {
       matingPool.add(population[loopPopulation]);
     }
   }
 
-  for (int loopMonteCarlo = 0; loopMonteCarlo < population.length; loopMonteCarlo++) {
+  for (int loopReproduction = 0; loopReproduction < population.length; loopReproduction++) {
     int a = int(random(matingPool.size()));
     int b = int(random(matingPool.size()));
     DNA partnerA = matingPool.get(a);
     DNA partnerB = matingPool.get(b);
-    println("A: "+ partnerA.fitness +" B: " + partnerB.fitness);
-    if (partnerB.fitness > partnerA.fitness) {
-      println("Throw A");
-    } else {
-      println("Leave A");
-    }
+    DNA child = partnerA.crossover(partnerB);
+    child.mutate(mutationRate);
+    population[loopReproduction] = child;
   }
 
-  //delay(300);
+
+  background(255);
+  fill(0);
+  String everything = "";
+  for (int i = 0; i < population.length; i++) {
+    println(population[i].getPhrase());
+    if (population[i].getPhrase() == target) {
+      println("Debe de irse");
+      exit();
+    }
+    everything += population[i].getPhrase() + "     ";
+  }
+  textFont(font, 12);
+  text(everything, 10, 10, width, height);
+
+  //delay(100);
 }
 
 void keyPressed() {
-  if (looping) noLoop();
-  else        loop();
+  if (looping)  noLoop();
+  else          loop();
 }
 
 void prinText(String message, int x, int y) {

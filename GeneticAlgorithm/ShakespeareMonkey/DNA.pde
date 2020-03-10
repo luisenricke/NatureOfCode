@@ -1,19 +1,18 @@
 class DNA {
-  String target = "to be or not tobe";
-  char[] genes = new char[18];
-
+  char[] genes;
 
   float fitness;
 
-  public DNA() {
+  public DNA(int size) {
+    genes = new char[size];
     for (int loop = 0; loop < genes.length; loop++) {
       genes[loop] = (char) random(32, 128);
     }
   }
 
-  void calculateFitness() {
+  void calculateFitness(String target) {
     int score = 0;
-    for (int loop = 0; loop <genes.length-1; loop++) {
+    for (int loop = 0; loop <genes.length; loop++) {
       if (genes[loop] == target.charAt(loop)) {
         score++;
       }
@@ -22,7 +21,29 @@ class DNA {
     fitness = (float)score / (float)target.length();
   }
 
-  String getGene() {
+  DNA crossover(DNA partner) {
+    DNA child = new DNA(genes.length);
+
+    //int midpoint = int(random(genes.length)); // Pick a midpoint
+    int midpoint = int(genes.length/2);         // Pick middle
+    
+    // Half from one, half from the other
+    for (int i = 0; i < genes.length; i++) {
+      if (i > midpoint) child.genes[i] = genes[i];
+      else              child.genes[i] = partner.genes[i];
+    }
+    return child;
+  }
+
+  void mutate(float mutationRate) {
+    for (int i = 0; i < genes.length; i++) {
+      if (random(1) < mutationRate) {
+        genes[i] = (char) random(32, 128);
+      }
+    }
+  }
+
+  String getPhrase() {
     return String.valueOf(genes);
   }
 }
