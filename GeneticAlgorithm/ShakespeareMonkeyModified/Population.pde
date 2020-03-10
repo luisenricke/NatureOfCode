@@ -8,10 +8,10 @@ class Population {
   boolean finished;             // Are we finished evolving?
   int perfectScore;
 
-  Population(String p, float m, int num) {
-    target = p;
-    mutationRate = m;
-    population = new DNA[num];
+  Population(String target_, float mutationRate_, int populationSize) {
+    target = target_;
+    mutationRate = mutationRate_;
+    population = new DNA[populationSize];
     for (int i = 0; i < population.length; i++) {
       population[i] = new DNA(target.length());
     }

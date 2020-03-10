@@ -1,76 +1,56 @@
-PFont font;
-
-float mutationRate = 0.01;
-int totalPopulation = 150;
-
-DNA [] population;
-ArrayList<DNA> matingPool;
+PFont f;
 String target;
+int popmax;
+float mutationRate;
+Population population;
 
 void setup() {
-  //noLoop();
-  size(820, 200);
-  font = createFont("Courier", 16, true);  // Config font
+  size(640, 360);
+  f = createFont("Courier", 32, true);
+  target = "To be or not to be.";
+  popmax = 5000;
+  mutationRate = 0.01;
 
-  target ="to be or not to be";
-  population = new DNA [totalPopulation];
-
-  for (int loop = 0; loop<population.length; loop++) {
-    population[loop] = new DNA(target.length());
-  }
+  // Create a populationation with a target phrase, mutation rate, and populationation max
+  population = new Population(target, mutationRate, popmax);
 }
 
 void draw() {
-  for (int iteration= 0; iteration<population.length; iteration++) {
-    population[iteration].calculateFitness(target);
+  // Generate mating pool
+  population.naturalSelection();
+  //Create next generation
+  population.generate();
+  // Calculate fitness
+  population.calcFitness();
+  displayInfo();
+
+  // If we found the target phrase, stop
+  if (population.finished()) {
+    println(millis()/1000.0);
+    noLoop();
   }
+}
 
-  matingPool = new ArrayList<DNA>();
-
-  for (int loopPopulation = 0; loopPopulation < population.length; loopPopulation++) {
-    int auxFitness = int(population[loopPopulation].fitness * 100);
-    for (int loopFitness = 0; loopFitness < auxFitness; loopFitness++) {
-      matingPool.add(population[loopPopulation]);
-    }
-  }
-
-  for (int loopReproduction = 0; loopReproduction < population.length; loopReproduction++) {
-    int a = int(random(matingPool.size()));
-    int b = int(random(matingPool.size()));
-    DNA partnerA = matingPool.get(a);
-    DNA partnerB = matingPool.get(b);
-    DNA child = partnerA.crossover(partnerB);
-    child.mutate(mutationRate);
-    population[loopReproduction] = child;
-  }
-
-
+void displayInfo() {
   background(255);
+  // Display current status of populationation
+  String answer = population.getBest();
+  textFont(f);
+  textAlign(LEFT);
   fill(0);
-  String everything = "";
-  for (int i = 0; i < population.length; i++) {
-    println(population[i].getPhrase());
-    if (population[i].getPhrase() == target) {
-      println("Debe de irse");
-      exit();
-    }
-    everything += population[i].getPhrase() + "     ";
-  }
-  textFont(font, 12);
-  text(everything, 10, 10, width, height);
+  
+  
+  textSize(24);
+  text("Best phrase:",20,30);
+  textSize(40);
+  text(answer, 20, 100);
 
-  //delay(100);
-}
-
-void keyPressed() {
-  if (looping)  noLoop();
-  else          loop();
-}
-
-void prinText(String message, int x, int y) {
-  // Global variable -> PFont font;
-  // Setup -> font = createFont("Arial", 16, true);  // Config font
-  textFont(font, 36);   // Size text
-  fill(0);              // Color text
-  text(message, x, y);  // Print
+  textSize(18);
+  text("total generations:     " + population.getGenerations(), 20, 160);
+  text("average fitness:       " + nf(population.getAverageFitness(), 0, 2), 20, 180);
+  text("total population: " + popmax, 20, 200);
+  text("mutation rate:         " + int(mutationRate * 100) + "%", 20, 220);
+ 
+  textSize(10);
+  text("All phrases:\n" + population.allPhrases(), 500, 10);
 }
