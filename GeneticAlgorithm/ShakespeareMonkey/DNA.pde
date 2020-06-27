@@ -26,7 +26,7 @@ class DNA {
 
     //int midpoint = int(random(genes.length)); // Pick a midpoint
     int midpoint = int(genes.length/2);         // Pick middle
-    
+
     // Half from one, half from the other
     for (int i = 0; i < genes.length; i++) {
       if (i > midpoint) child.genes[i] = genes[i];
